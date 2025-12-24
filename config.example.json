@@ -1,5 +1,5 @@
 {
-  "hotkey": "right ctrl+menu",
+  "hotkey": "right ctrl",
   "min_duration_seconds": 0.5,
   "model": "base",
   "device": "auto",
