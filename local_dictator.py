@@ -184,14 +184,25 @@ class DictatorApp:
 
         self.logger.info("Using fallback icons")
 
+    def _detect_device(self):
+        """Detect best available device (CUDA GPU or CPU)."""
+        try:
+            import ctranslate2
+            if "cuda" in ctranslate2.get_supported_compute_types("cuda"):
+                return "cuda", "float16"
+        except Exception:
+            pass
+        return "cpu", "int8"
+
     def _load_model(self):
         """Load the Whisper model."""
-        model_name = self.config.get("model", "tiny")
-        self.logger.info(f"Loading Whisper model: {model_name}")
+        model_name = self.config.get("model", "base")
+        device, compute_type = self._detect_device()
+        self.logger.info(f"Loading Whisper model: {model_name} on {device} ({compute_type})")
 
         try:
-            self.model = WhisperModel(model_name, device="cpu", compute_type="int8")
-            self.logger.info("Model loaded successfully")
+            self.model = WhisperModel(model_name, device=device, compute_type=compute_type)
+            self.logger.info(f"Model loaded successfully on {device.upper()}")
         except Exception as e:
             self.logger.error(f"Failed to load model: {e}")
             raise
