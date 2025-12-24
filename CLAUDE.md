@@ -19,7 +19,7 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 │  Global Hotkey: keyboard lib (Ctrl+Insert)      │
 │  Audio Recording: sounddevice + numpy           │
 │  Audio Feedback: winsound (beeps)               │
-│  STT: faster-whisper (tiny, int8, CPU)          │
+│  STT: faster-whisper (base, int8, CPU)          │
 │  Text Injection: pyperclip + pynput (Ctrl+V)    │
 │  Icons: Lucide message-circle-code (PIL render) │
 └─────────────────────────────────────────────────┘
@@ -43,7 +43,7 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 ### Transcription
 
 - **Engine:** `faster-whisper`
-- **Model:** `tiny` (English)
+- **Model:** `base` (English)
 - **Compute:** CPU with int8 quantization
 - **Mode:** Batch (full recording transcribed after release)
 - **Language:** English only, pure transcription (no voice commands)
@@ -98,7 +98,7 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 {
   "hotkey": "ctrl+insert",
   "min_duration_seconds": 0.5,
-  "model": "tiny",
+  "model": "base",
   "language": "en",
   "beep_enabled": true,
   "log_to_file": true,
@@ -186,7 +186,7 @@ Note: `pythonw` runs without console window. For debugging, use `python` instead
 - Main thread: pystray event loop
 - Hotkey listener: Runs in separate thread (keyboard library handles this)
 - Recording: Happens on hotkey thread
-- Transcription: Can block briefly (tiny model is fast), but consider running in thread pool if UI feels sluggish
+- Transcription: Can block briefly (base model is fast), but consider running in thread pool if UI feels sluggish
 
 ### Clipboard Restoration
 
@@ -248,7 +248,7 @@ Alternatively, use `keyboard.add_hotkey("ctrl+insert", ...)` but this doesn't ea
 - Microphone selection in tray menu
 - Configurable hotkey via tray menu
 - Auto-start with Windows
-- Model size selection (base, small)
+- Model size selection (tiny, small, large)
 - Voice commands ("new line", "tab", etc.)
 - Language switching
 - Real-time/streaming transcription

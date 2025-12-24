@@ -5,7 +5,7 @@ A local push-to-talk speech-to-text dictation app for Windows. Hold a hotkey, sp
 ## Features
 
 - **Push-to-talk**: Hold `Ctrl+Insert` to record, release to transcribe
-- **Local processing**: Uses [faster-whisper](https://github.com/SYSTRAN/faster-whisper) with the tiny model - no cloud, no API keys
+- **Local processing**: Uses [faster-whisper](https://github.com/SYSTRAN/faster-whisper) with the base model - no cloud, no API keys
 - **System-wide**: Works in any application via clipboard injection
 - **System tray**: Minimal footprint with color-coded status icon
 - **Audio feedback**: Beeps indicate recording start/stop/error
@@ -24,7 +24,7 @@ cd local-dictator
 setup.bat
 ```
 
-This creates a virtual environment and installs dependencies. First run will download the Whisper model (~75MB).
+This creates a virtual environment and installs dependencies. First run will download the Whisper model (~145MB) to the Hugging Face cache (`~/.cache/huggingface/hub/`).
 
 ## Usage
 
@@ -50,7 +50,7 @@ Copy `config.example.json` to `config.json` to customize (optional - defaults ar
 {
   "hotkey": "ctrl+insert",
   "min_duration_seconds": 0.5,
-  "model": "tiny",
+  "model": "base",
   "language": "en",
   "beep_enabled": true,
   "log_to_file": true,
