@@ -114,4 +114,4 @@ Model loaded successfully on CPU
 
 ## License
 
-MIT
+[GPL-3.0](LICENSE)
