@@ -63,7 +63,7 @@ Copy `config.example.json` to `config.json` to customize (optional - defaults ar
 
 | Option | Description |
 | ------ | ----------- |
-| `hotkey` | Push-to-talk hotkey combination |
+| `hotkey` | Push-to-talk hotkey (see supported presets below) |
 | `min_duration_seconds` | Minimum recording length (prevents accidental triggers) |
 | `model` | Whisper model size (tiny, base, small) |
 | `device` | Compute device: `"auto"`, `"cuda"`, or `"cpu"` |
@@ -71,6 +71,17 @@ Copy `config.example.json` to `config.json` to customize (optional - defaults ar
 | `beep_enabled` | Audio feedback on/off |
 | `log_to_file` | Write logs to `local-dictator.log` |
 | `log_to_console` | Print logs to console |
+
+### Hotkey Format
+
+Any key or key combination is supported:
+
+| Format | Example | Behavior |
+| ------ | ------- | -------- |
+| Single key | `"menu"`, `"f9"`, `"pause"` | Hold key to record, release to stop |
+| Modifier+key | `"ctrl+insert"`, `"right ctrl+menu"`, `"alt+\`"` | Hold modifier, press key to start, release modifier to stop |
+
+All hotkeys are suppressed to prevent side effects (no context menus, no typed characters).
 
 ## Troubleshooting
 

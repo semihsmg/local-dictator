@@ -16,7 +16,7 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 ┌─────────────────────────────────────────────────┐
 │         System Tray App (pystray)               │
 ├─────────────────────────────────────────────────┤
-│  Global Hotkey: keyboard lib (Right Ctrl+Menu)  │
+│  Global Hotkey: keyboard lib (configurable)     │
 │  Audio Recording: sounddevice + numpy           │
 │  Audio Feedback: winsound (beeps)               │
 │  STT: faster-whisper (base, CUDA/CPU auto)      │
@@ -29,8 +29,10 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 
 ### Hotkey: Push-to-Talk
 
-- **Hotkey:** `Right Ctrl + Menu` (Menu = Application/Context key)
-- **Behavior:** Hold Right Ctrl, press Menu to start recording, release Right Ctrl to stop and transcribe
+- **Default:** `Right Ctrl + Menu` (configurable via `config.json`)
+- **Format:** Any key or modifier+key combination (e.g., `"menu"`, `"f9"`, `"ctrl+insert"`)
+- **Behavior:** Single key = hold to record; Modifier+key = hold modifier, press key to start, release modifier to stop
+- **Suppression:** All hotkeys are suppressed to prevent side effects
 - **Minimum duration:** 0.5 seconds (recordings shorter than this are ignored to prevent accidental triggers)
 
 ### Recording
@@ -109,6 +111,7 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 
 | Option | Values | Description |
 | ------ | ------ | ----------- |
+| `hotkey` | Any key or modifier+key | Push-to-talk hotkey (falls back to default if invalid) |
 | `device` | `"auto"`, `"cuda"`, `"cpu"` | Compute device for transcription |
 
 All fields should have sensible defaults if config file is missing.
@@ -208,23 +211,23 @@ Handle exceptions if clipboard contains non-text data (images, etc.) — in that
 
 ### Hotkey Implementation
 
-```python
-import keyboard
+Hotkeys are parsed dynamically from the config string:
 
-# Menu key press starts recording if Right Ctrl is held
-keyboard.on_press_key("menu", on_menu_down, suppress=True)
-# Right Ctrl release stops recording
-keyboard.on_release_key("right ctrl", on_right_ctrl_up, suppress=False)
+**Parsing logic:**
 
-def on_menu_down(event):
-    if keyboard.is_pressed("right ctrl"):
-        start_recording()
-        return False  # Suppress menu key
+- If string contains `+`: Split on last `+` → modifier + trigger (modifier_trigger type)
+- Otherwise: Single key (single_key type)
 
-def on_right_ctrl_up(event):
-    if recording:
-        stop_recording()
-```
+**modifier_trigger** (e.g., `ctrl+insert`, `right ctrl+menu`):
+
+- Register trigger key press/release handlers (always suppressed)
+- Register modifier key release handler (stops recording)
+
+**single_key** (e.g., `menu`, `f9`, `pause`):
+
+- Register key press/release handlers (always suppressed)
+
+Invalid key names fall back to default (`right ctrl+menu`) with a warning log.
 
 ### Error Conditions to Handle
 
@@ -246,19 +249,19 @@ def on_right_ctrl_up(event):
 
 - [ ] App starts without errors
 - [ ] Tray icon appears (cyan)
-- [ ] Right Ctrl + Menu starts recording (icon turns red, start beep plays)
-- [ ] Releasing Right Ctrl stops recording (stop beep plays, icon turns yellow)
+- [ ] Configured hotkey starts recording (icon turns red, start beep plays)
+- [ ] Releasing hotkey stops recording (stop beep plays, icon turns yellow)
 - [ ] Transcribed text appears at cursor in VS Code
 - [ ] Original clipboard content is restored
 - [ ] Recordings under 0.5s are ignored
 - [ ] Empty transcriptions play error beep
 - [ ] Exit menu item closes app cleanly
 - [ ] Logs appear in console and file
+- [ ] Invalid hotkey config falls back to default with warning
 
 ## Future Enhancements (Out of Scope for v1)
 
 - Microphone selection in tray menu
-- Configurable hotkey via tray menu
 - Auto-start with Windows
 - Model size selection (tiny, small, large)
 - Voice commands ("new line", "tab", etc.)
