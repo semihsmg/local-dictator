@@ -360,7 +360,7 @@ class DictatorApp:
 
     def _create_menu(self):
         """Create system tray menu."""
-        def get_status_text():
+        def get_status_text(item):
             return f"Status: {self.state.value.capitalize()}"
 
         return pystray.Menu(
