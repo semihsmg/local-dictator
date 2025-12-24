@@ -16,7 +16,7 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 ┌─────────────────────────────────────────────────┐
 │         System Tray App (pystray)               │
 ├─────────────────────────────────────────────────┤
-│  Global Hotkey: keyboard lib (Ctrl+Insert)      │
+│  Global Hotkey: keyboard lib (Right Ctrl+Menu)  │
 │  Audio Recording: sounddevice + numpy           │
 │  Audio Feedback: winsound (beeps)               │
 │  STT: faster-whisper (base, CUDA/CPU auto)      │
@@ -29,8 +29,8 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 
 ### Hotkey: Push-to-Talk
 
-- **Hotkey:** `Ctrl+Insert`
-- **Behavior:** Hold to record, release to transcribe and insert
+- **Hotkey:** `Right Ctrl + Menu` (Menu = Application/Context key)
+- **Behavior:** Hold Right Ctrl, press Menu to start recording, release Right Ctrl to stop and transcribe
 - **Minimum duration:** 0.5 seconds (recordings shorter than this are ignored to prevent accidental triggers)
 
 ### Recording
@@ -96,15 +96,20 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 
 ```json
 {
-  "hotkey": "ctrl+insert",
+  "hotkey": "right ctrl+menu",
   "min_duration_seconds": 0.5,
   "model": "base",
+  "device": "auto",
   "language": null,
   "beep_enabled": true,
   "log_to_file": true,
   "log_to_console": true
 }
 ```
+
+| Option | Values | Description |
+| ------ | ------ | ----------- |
+| `device` | `"auto"`, `"cuda"`, `"cpu"` | Compute device for transcription |
 
 All fields should have sensible defaults if config file is missing.
 
@@ -206,13 +211,20 @@ Handle exceptions if clipboard contains non-text data (images, etc.) — in that
 ```python
 import keyboard
 
-keyboard.on_press_key("insert", on_key_down, suppress=True)
-keyboard.on_release_key("insert", on_key_up, suppress=True)
+# Menu key press starts recording if Right Ctrl is held
+keyboard.on_press_key("menu", on_menu_down, suppress=True)
+# Right Ctrl release stops recording
+keyboard.on_release_key("right ctrl", on_right_ctrl_up, suppress=False)
 
-# Check for ctrl modifier in handlers
+def on_menu_down(event):
+    if keyboard.is_pressed("right ctrl"):
+        start_recording()
+        return False  # Suppress menu key
+
+def on_right_ctrl_up(event):
+    if recording:
+        stop_recording()
 ```
-
-Alternatively, use `keyboard.add_hotkey("ctrl+insert", ...)` but this doesn't easily support push-to-talk. Manual key tracking recommended.
 
 ### Error Conditions to Handle
 
@@ -234,8 +246,8 @@ Alternatively, use `keyboard.add_hotkey("ctrl+insert", ...)` but this doesn't ea
 
 - [ ] App starts without errors
 - [ ] Tray icon appears (cyan)
-- [ ] Ctrl+Insert starts recording (icon turns red, start beep plays)
-- [ ] Releasing Ctrl+Insert stops recording (stop beep plays, icon turns yellow)
+- [ ] Right Ctrl + Menu starts recording (icon turns red, start beep plays)
+- [ ] Releasing Right Ctrl stops recording (stop beep plays, icon turns yellow)
 - [ ] Transcribed text appears at cursor in VS Code
 - [ ] Original clipboard content is restored
 - [ ] Recordings under 0.5s are ignored

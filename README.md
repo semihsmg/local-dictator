@@ -4,7 +4,7 @@ A local push-to-talk speech-to-text dictation app for Windows. Hold a hotkey, sp
 
 ## Features
 
-- **Push-to-talk**: Hold `Ctrl+Insert` to record, release to transcribe
+- **Push-to-talk**: Hold `Right Ctrl`, press `Menu` to record, release `Right Ctrl` to transcribe
 - **Local processing**: Uses [faster-whisper](https://github.com/SYSTRAN/faster-whisper) with the base model - no cloud, no API keys
 - **Multi-language**: Auto-detects language or set a specific one in config
 - **System-wide**: Works in any application via clipboard injection
@@ -34,7 +34,7 @@ This creates a virtual environment and installs dependencies. First run will dow
 start.bat
 ```
 
-A cyan icon appears in the system tray. Hold `Ctrl+Insert` to dictate:
+A cyan icon appears in the system tray. Hold `Right Ctrl` + press `Menu` to dictate:
 
 | Icon Color | State |
 | ---------- | ----- |
@@ -50,9 +50,10 @@ Copy `config.example.json` to `config.json` to customize (optional - defaults ar
 
 ```json
 {
-  "hotkey": "ctrl+insert",
+  "hotkey": "right ctrl+menu",
   "min_duration_seconds": 0.5,
   "model": "base",
+  "device": "auto",
   "language": null,
   "beep_enabled": true,
   "log_to_file": true,
@@ -65,6 +66,7 @@ Copy `config.example.json` to `config.json` to customize (optional - defaults ar
 | `hotkey` | Push-to-talk hotkey combination |
 | `min_duration_seconds` | Minimum recording length (prevents accidental triggers) |
 | `model` | Whisper model size (tiny, base, small) |
+| `device` | Compute device: `"auto"`, `"cuda"`, or `"cpu"` |
 | `language` | Language code (e.g., "en", "de", "fr") or null for auto-detect |
 | `beep_enabled` | Audio feedback on/off |
 | `log_to_file` | Write logs to `local-dictator.log` |
@@ -76,7 +78,7 @@ Copy `config.example.json` to `config.json` to customize (optional - defaults ar
 
 **Empty transcriptions**: Speak clearly and ensure your microphone is working. Recordings under 0.5s are ignored.
 
-**Hotkey doesn't work**: Another application may be using `Ctrl+Insert`. Check the log file for errors.
+**Hotkey doesn't work**: Another application may be using the hotkey. Check the log file for errors.
 
 ## GPU Acceleration (Optional)
 
