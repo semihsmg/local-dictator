@@ -48,7 +48,7 @@ BEEP_DURATION = 100  # ms
 DEFAULT_CONFIG = {
     "hotkey": "ctrl+insert",
     "min_duration_seconds": 0.5,
-    "model": "tiny",
+    "model": "base",
     "language": "en",
     "beep_enabled": True,
     "log_to_file": True,
