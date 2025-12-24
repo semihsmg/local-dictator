@@ -6,6 +6,7 @@ A local push-to-talk speech-to-text dictation app for Windows. Hold a hotkey, sp
 
 - **Push-to-talk**: Hold `Ctrl+Insert` to record, release to transcribe
 - **Local processing**: Uses [faster-whisper](https://github.com/SYSTRAN/faster-whisper) with the base model - no cloud, no API keys
+- **Multi-language**: Auto-detects language or set a specific one in config
 - **System-wide**: Works in any application via clipboard injection
 - **System tray**: Minimal footprint with color-coded status icon
 - **Audio feedback**: Beeps indicate recording start/stop/error
@@ -51,7 +52,7 @@ Copy `config.example.json` to `config.json` to customize (optional - defaults ar
   "hotkey": "ctrl+insert",
   "min_duration_seconds": 0.5,
   "model": "base",
-  "language": "en",
+  "language": null,
   "beep_enabled": true,
   "log_to_file": true,
   "log_to_console": true
@@ -63,7 +64,7 @@ Copy `config.example.json` to `config.json` to customize (optional - defaults ar
 | `hotkey` | Push-to-talk hotkey combination |
 | `min_duration_seconds` | Minimum recording length (prevents accidental triggers) |
 | `model` | Whisper model size (tiny, base, small) |
-| `language` | Language code for transcription |
+| `language` | Language code (e.g., "en", "de", "fr") or null for auto-detect |
 | `beep_enabled` | Audio feedback on/off |
 | `log_to_file` | Write logs to `local-dictator.log` |
 | `log_to_console` | Print logs to console |

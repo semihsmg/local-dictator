@@ -43,10 +43,10 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 ### Transcription
 
 - **Engine:** `faster-whisper`
-- **Model:** `base` (English)
+- **Model:** `base` (multilingual)
 - **Compute:** CPU with int8 quantization
 - **Mode:** Batch (full recording transcribed after release)
-- **Language:** English only, pure transcription (no voice commands)
+- **Language:** Auto-detect (configurable), pure transcription (no voice commands)
 
 ### Text Output
 
@@ -99,7 +99,7 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
   "hotkey": "ctrl+insert",
   "min_duration_seconds": 0.5,
   "model": "base",
-  "language": "en",
+  "language": null,
   "beep_enabled": true,
   "log_to_file": true,
   "log_to_console": true
@@ -250,6 +250,5 @@ Alternatively, use `keyboard.add_hotkey("ctrl+insert", ...)` but this doesn't ea
 - Auto-start with Windows
 - Model size selection (tiny, small, large)
 - Voice commands ("new line", "tab", etc.)
-- Language switching
 - Real-time/streaming transcription
 - PyInstaller packaging to standalone .exe
