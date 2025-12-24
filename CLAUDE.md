@@ -30,7 +30,7 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 ### Hotkey: Push-to-Talk
 
 - **Default:** `Right Ctrl + Menu` (configurable via `config.json`)
-- **Format:** Any key or modifier+key combination (e.g., `"menu"`, `"f9"`, `"ctrl+insert"`)
+- **Format:** Any key or modifier+key combination (e.g., `"menu"`, `"f9"`, `"f14"`, `"ctrl+insert"`)
 - **Behavior:** Single key = hold to record; Modifier+key = hold modifier, press key to start, release modifier to stop
 - **Suppression:** All hotkeys are suppressed to prevent side effects
 - **Minimum duration:** 0.5 seconds (recordings shorter than this are ignored to prevent accidental triggers)
@@ -111,7 +111,7 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 
 | Option | Values | Description |
 | ------ | ------ | ----------- |
-| `hotkey` | Any key or modifier+key | Push-to-talk hotkey (falls back to default if invalid) |
+| `hotkey` | Key or modifier+key | Push-to-talk hotkey (falls back to default if invalid) |
 | `device` | `"auto"`, `"cuda"`, `"cpu"` | Compute device for transcription |
 
 All fields should have sensible defaults if config file is missing.
@@ -133,6 +133,7 @@ local-dictator/
 ├── start.bat              # Windows launcher script
 ├── setup.bat              # Venv setup script
 ├── local_dictator.py      # Main application entry point
+├── test_keyboard.py       # Utility to identify key names
 ├── local-dictator.log     # Log file (generated at runtime)
 └── icons/                 # Generated icon files (optional cache)
 ```
@@ -148,7 +149,6 @@ Pillow
 keyboard
 pynput
 pyperclip
-requests
 ```
 
 Note: `winsound` is Windows built-in, no pip install needed.
@@ -223,7 +223,7 @@ Hotkeys are parsed dynamically from the config string:
 - Register trigger key press/release handlers (always suppressed)
 - Register modifier key release handler (stops recording)
 
-**single_key** (e.g., `menu`, `f9`, `pause`):
+**single_key** (e.g., `menu`, `f9`, `f14`, `pause`):
 
 - Register key press/release handlers (always suppressed)
 

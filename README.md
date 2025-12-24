@@ -78,8 +78,10 @@ Any key or key combination is supported:
 
 | Format | Example | Behavior |
 | ------ | ------- | -------- |
-| Single key | `"menu"`, `"f9"`, `"pause"` | Hold key to record, release to stop |
+| Single key | `"menu"`, `"f9"`, `"pause"`, `"f14"` | Hold key to record, release to stop |
 | Modifier+key | `"ctrl+insert"`, `"right ctrl+menu"`, `"alt+\`"` | Hold modifier, press key to start, release modifier to stop |
+
+To identify key names, run `python test_keyboard.py` and press keys to see their names.
 
 All hotkeys are suppressed to prevent side effects (no context menus, no typed characters).
 
