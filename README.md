@@ -10,6 +10,7 @@ A local push-to-talk speech-to-text dictation app for Windows. Hold a hotkey, sp
 - **System-wide**: Works in any application via clipboard injection
 - **System tray**: Minimal footprint with color-coded status icon
 - **Audio feedback**: Beeps indicate recording start/stop/error
+- **GPU acceleration**: Auto-detects NVIDIA CUDA for faster transcription
 
 ## Requirements
 
@@ -76,6 +77,40 @@ Copy `config.example.json` to `config.json` to customize (optional - defaults ar
 **Empty transcriptions**: Speak clearly and ensure your microphone is working. Recordings under 0.5s are ignored.
 
 **Hotkey doesn't work**: Another application may be using `Ctrl+Insert`. Check the log file for errors.
+
+## GPU Acceleration (Optional)
+
+The app auto-detects NVIDIA CUDA and uses GPU if available. For CPU-only systems, it falls back automatically.
+
+### To Enable CUDA
+
+1. **Install NVIDIA drivers** (if not already installed)
+
+2. **Install CUDA Toolkit 12.x**
+   - Download from [NVIDIA CUDA Downloads](https://developer.nvidia.com/cuda-downloads)
+   - Or via winget: `winget install Nvidia.CUDA`
+
+3. **Reinstall ctranslate2 with CUDA support**
+
+   ```batch
+   .venv\Scripts\activate
+   pip uninstall ctranslate2 -y
+   pip install ctranslate2
+   ```
+
+4. **Verify** - Check the log on startup:
+
+   ```log
+   Loading Whisper model: base on cuda (float16)
+   Model loaded successfully on CUDA
+   ```
+
+If CUDA is not detected, you'll see:
+
+```log
+Loading Whisper model: base on cpu (int8)
+Model loaded successfully on CPU
+```
 
 ## License
 

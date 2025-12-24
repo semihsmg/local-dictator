@@ -19,7 +19,7 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 │  Global Hotkey: keyboard lib (Ctrl+Insert)      │
 │  Audio Recording: sounddevice + numpy           │
 │  Audio Feedback: winsound (beeps)               │
-│  STT: faster-whisper (base, int8, CPU)          │
+│  STT: faster-whisper (base, CUDA/CPU auto)      │
 │  Text Injection: pyperclip + pynput (Ctrl+V)    │
 │  Icons: Lucide message-circle-code (PIL render) │
 └─────────────────────────────────────────────────┘
@@ -44,7 +44,7 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 
 - **Engine:** `faster-whisper`
 - **Model:** `base` (multilingual)
-- **Compute:** CPU with int8 quantization
+- **Compute:** Auto-detect (CUDA float16 if available, else CPU int8)
 - **Mode:** Batch (full recording transcribed after release)
 - **Language:** Auto-detect (configurable), pure transcription (no voice commands)
 
