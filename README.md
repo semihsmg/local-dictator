@@ -90,12 +90,12 @@ The app auto-detects NVIDIA CUDA and uses GPU if available. For CPU-only systems
    - Download from [NVIDIA CUDA Downloads](https://developer.nvidia.com/cuda-downloads)
    - Or via winget: `winget install Nvidia.CUDA`
 
-3. **Reinstall ctranslate2 with CUDA support**
+3. **Install CUDA dependencies in venv**
 
    ```batch
    .venv\Scripts\activate
    pip uninstall ctranslate2 -y
-   pip install ctranslate2
+   pip install ctranslate2 nvidia-cudnn-cu12
    ```
 
 4. **Verify** - Check the log on startup:

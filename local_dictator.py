@@ -188,7 +188,7 @@ class DictatorApp:
         """Detect best available device (CUDA GPU or CPU)."""
         try:
             import ctranslate2
-            if "cuda" in ctranslate2.get_supported_compute_types("cuda"):
+            if ctranslate2.get_supported_compute_types("cuda"):
                 return "cuda", "float16"
         except Exception:
             pass
