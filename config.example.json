@@ -1,7 +1,8 @@
 {
-  "hotkey": "ctrl+insert",
+  "hotkey": "right ctrl+menu",
   "min_duration_seconds": 0.5,
   "model": "base",
+  "device": "auto",
   "language": null,
   "beep_enabled": true,
   "log_to_file": true,

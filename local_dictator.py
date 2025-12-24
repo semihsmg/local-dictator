@@ -46,9 +46,10 @@ BEEP_FREQUENCIES = {
 BEEP_DURATION = 100  # ms
 
 DEFAULT_CONFIG = {
-    "hotkey": "ctrl+insert",
+    "hotkey": "right ctrl+menu",
     "min_duration_seconds": 0.5,
     "model": "base",
+    "device": "auto",  # "auto", "cuda", or "cpu"
     "language": None,  # None = auto-detect
     "beep_enabled": True,
     "log_to_file": True,
@@ -73,7 +74,6 @@ class DictatorApp:
         self.recording = False
         self.audio_data = []
         self.record_start_time = None
-        self.ctrl_pressed = False
 
         self.icon = None
         self.icon_images = {}
@@ -185,13 +185,31 @@ class DictatorApp:
         self.logger.info("Using fallback icons")
 
     def _detect_device(self):
-        """Detect best available device (CUDA GPU or CPU)."""
+        """Detect best available device based on config (auto, cuda, or cpu)."""
+        device_config = self.config.get("device", "auto").lower()
+
+        if device_config == "cpu":
+            return "cpu", "int8"
+
+        # Check CUDA availability
+        cuda_available = False
         try:
             import ctranslate2
             if ctranslate2.get_supported_compute_types("cuda"):
-                return "cuda", "float16"
+                cuda_available = True
         except Exception:
             pass
+
+        if device_config == "cuda":
+            if cuda_available:
+                return "cuda", "float16"
+            else:
+                self.logger.warning("CUDA requested but not available, falling back to CPU")
+                return "cpu", "int8"
+
+        # auto mode
+        if cuda_available:
+            return "cuda", "float16"
         return "cpu", "int8"
 
     def _load_model(self):
@@ -349,24 +367,30 @@ class DictatorApp:
             self.logger.error(f"Failed to insert text: {e}")
             self._beep("error")
 
-    def _on_key_down(self, event):
-        """Handle key down events."""
-        if event.name == "insert" and keyboard.is_pressed("ctrl"):
+    def _on_menu_down(self, event):
+        """Handle menu key press - start recording if right ctrl is held."""
+        if keyboard.is_pressed("right ctrl"):
             if not self.recording:
                 self._start_recording()
+            return False  # Suppress menu key
 
-    def _on_key_up(self, event):
-        """Handle key up events."""
-        if event.name == "insert":
-            if self.recording:
-                self._stop_recording()
+    def _on_menu_up(self, event):
+        """Handle menu key release - suppress if right ctrl is held."""
+        if keyboard.is_pressed("right ctrl"):
+            return False  # Suppress menu key release
+
+    def _on_right_ctrl_up(self, event):
+        """Handle right ctrl release - stop recording."""
+        if self.recording:
+            self._stop_recording()
 
     def _setup_hotkey(self):
         """Register global hotkey listeners."""
         try:
-            keyboard.on_press_key("insert", self._on_key_down, suppress=False)
-            keyboard.on_release_key("insert", self._on_key_up, suppress=False)
-            self.logger.info("Hotkey registered: Ctrl+Insert")
+            keyboard.on_press_key("menu", self._on_menu_down, suppress=True)
+            keyboard.on_release_key("menu", self._on_menu_up, suppress=True)
+            keyboard.on_release_key("right ctrl", self._on_right_ctrl_up, suppress=False)
+            self.logger.info("Hotkey registered: Right Ctrl + Menu")
         except Exception as e:
             self.logger.error(f"Failed to register hotkey: {e}")
 
@@ -411,7 +435,7 @@ class DictatorApp:
             menu=self._create_menu()
         )
 
-        self.logger.info("Application ready. Press Ctrl+Insert to dictate.")
+        self.logger.info("Application ready. Hold Right Ctrl + press Menu to dictate.")
 
         try:
             self.icon.run()
