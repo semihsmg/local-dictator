@@ -4,7 +4,6 @@ Local Dictator - Push-to-talk speech-to-text dictation for Windows
 
 import json
 import logging
-import os
 import sys
 import threading
 import time
