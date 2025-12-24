@@ -58,6 +58,8 @@ DEFAULT_CONFIG = {
 
 CLIPBOARD_RESTORE_DELAY = 0.1  # 100ms
 
+DEFAULT_HOTKEY = "right ctrl+menu"
+
 
 class AppState(Enum):
     IDLE = "idle"
@@ -367,32 +369,99 @@ class DictatorApp:
             self.logger.error(f"Failed to insert text: {e}")
             self._beep("error")
 
-    def _on_menu_down(self, event):
-        """Handle menu key press - start recording if right ctrl is held."""
-        if keyboard.is_pressed("right ctrl"):
-            if not self.recording:
-                self._start_recording()
-            return False  # Suppress menu key
+    def _parse_hotkey(self, hotkey_str: str) -> dict:
+        """Parse a hotkey string into configuration.
 
-    def _on_menu_up(self, event):
-        """Handle menu key release - suppress if right ctrl is held."""
-        if keyboard.is_pressed("right ctrl"):
-            return False  # Suppress menu key release
+        Formats:
+        - Single key: "menu", "f9", "pause"
+        - Modifier+key: "ctrl+insert", "right ctrl+menu", "alt+`"
+        """
+        hotkey_str = hotkey_str.lower().strip()
 
-    def _on_right_ctrl_up(self, event):
-        """Handle right ctrl release - stop recording."""
+        if "+" in hotkey_str:
+            # Modifier+key format: split on last "+" to handle "right ctrl+menu"
+            last_plus = hotkey_str.rfind("+")
+            modifier = hotkey_str[:last_plus].strip()
+            trigger = hotkey_str[last_plus + 1:].strip()
+            return {
+                "type": "modifier_trigger",
+                "modifier": modifier,
+                "trigger": trigger,
+            }
+        else:
+            # Single key format
+            return {
+                "type": "single_key",
+                "key": hotkey_str,
+            }
+
+    def _get_hotkey_config(self):
+        """Get hotkey configuration, falling back to default if invalid."""
+        hotkey = self.config.get("hotkey", DEFAULT_HOTKEY).lower().strip()
+        return hotkey, self._parse_hotkey(hotkey)
+
+    def _on_trigger_down(self, event):
+        """Handle trigger key press - start recording if modifier is held (modifier_trigger type)."""
+        if keyboard.is_pressed(self._hotkey_modifier) and not self.recording:
+            threading.Thread(target=self._start_recording, daemon=True).start()
+        return False  # Always suppress
+
+    def _on_trigger_up(self, event):
+        """Handle trigger key release - always suppress (modifier_trigger type)."""
+        return False  # Always suppress
+
+    def _on_modifier_up(self, event):
+        """Handle modifier release - stop recording (modifier_trigger type)."""
         if self.recording:
             self._stop_recording()
 
+    def _on_single_key_down(self, event):
+        """Handle single key press - start recording (single_key type)."""
+        if not self.recording:
+            threading.Thread(target=self._start_recording, daemon=True).start()
+        return False  # Always suppress
+
+    def _on_single_key_up(self, event):
+        """Handle single key release - stop recording (single_key type)."""
+        # Schedule stop in a thread so we can return False immediately for suppression
+        if self.recording:
+            threading.Thread(target=self._stop_recording, daemon=True).start()
+        return False  # Always suppress
+
+    def _register_hotkey(self, hotkey_name: str, hotkey_config: dict):
+        """Register hotkey handlers. Raises exception if key is invalid."""
+        if hotkey_config["type"] == "modifier_trigger":
+            self._hotkey_modifier = hotkey_config["modifier"]
+            self._hotkey_trigger = hotkey_config["trigger"]
+
+            keyboard.on_press_key(self._hotkey_trigger, self._on_trigger_down, suppress=True)
+            keyboard.on_release_key(self._hotkey_trigger, self._on_trigger_up, suppress=True)
+            keyboard.on_release_key(self._hotkey_modifier, self._on_modifier_up, suppress=False)
+
+        elif hotkey_config["type"] == "single_key":
+            single_key = hotkey_config["key"]
+            keyboard.on_press_key(single_key, self._on_single_key_down, suppress=True)
+            keyboard.on_release_key(single_key, self._on_single_key_up, suppress=True)
+
+        self.logger.info(f"Hotkey registered: {hotkey_name}")
+
     def _setup_hotkey(self):
-        """Register global hotkey listeners."""
+        """Register global hotkey listeners based on config."""
+        hotkey_name, hotkey_config = self._get_hotkey_config()
+
         try:
-            keyboard.on_press_key("menu", self._on_menu_down, suppress=True)
-            keyboard.on_release_key("menu", self._on_menu_up, suppress=True)
-            keyboard.on_release_key("right ctrl", self._on_right_ctrl_up, suppress=False)
-            self.logger.info("Hotkey registered: Right Ctrl + Menu")
+            self._register_hotkey(hotkey_name, hotkey_config)
         except Exception as e:
-            self.logger.error(f"Failed to register hotkey: {e}")
+            if hotkey_name != DEFAULT_HOTKEY:
+                self.logger.warning(f"Invalid hotkey '{hotkey_name}': {e}")
+                self.logger.warning(f"Falling back to default: {DEFAULT_HOTKEY}")
+                try:
+                    default_config = self._parse_hotkey(DEFAULT_HOTKEY)
+                    self._register_hotkey(DEFAULT_HOTKEY, default_config)
+                except Exception as e2:
+                    self.logger.error(f"Failed to register default hotkey: {e2}")
+            else:
+                self.logger.error(f"Failed to register hotkey: {e}")
 
     def _create_menu(self):
         """Create system tray menu."""
@@ -435,7 +504,8 @@ class DictatorApp:
             menu=self._create_menu()
         )
 
-        self.logger.info("Application ready. Hold Right Ctrl + press Menu to dictate.")
+        hotkey_name, _ = self._get_hotkey_config()
+        self.logger.info(f"Application ready. Hotkey: {hotkey_name}")
 
         try:
             self.icon.run()
