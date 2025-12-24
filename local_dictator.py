@@ -49,7 +49,7 @@ DEFAULT_CONFIG = {
     "hotkey": "ctrl+insert",
     "min_duration_seconds": 0.5,
     "model": "base",
-    "language": "en",
+    "language": None,  # None = auto-detect
     "beep_enabled": True,
     "log_to_file": True,
     "log_to_console": True
@@ -284,9 +284,10 @@ class DictatorApp:
             audio = np.concatenate(self.audio_data, axis=0).flatten()
             self.logger.info(f"Processing {len(audio)} samples")
 
+            language = self.config.get("language")  # None = auto-detect
             segments, info = self.model.transcribe(
                 audio,
-                language=self.config.get("language", "en"),
+                language=language,
                 beam_size=5
             )
 

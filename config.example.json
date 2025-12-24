@@ -2,7 +2,7 @@
   "hotkey": "ctrl+insert",
   "min_duration_seconds": 0.5,
   "model": "base",
-  "language": "en",
+  "language": null,
   "beep_enabled": true,
   "log_to_file": true,
   "log_to_console": true
