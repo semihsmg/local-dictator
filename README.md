@@ -97,6 +97,8 @@ All hotkeys are suppressed to prevent side effects (no context menus, no typed c
 
 The app auto-detects NVIDIA CUDA and uses GPU if available. For CPU-only systems, it falls back automatically.
 
+cuDNN libraries (`nvidia-cudnn-cu12`) are included in `requirements.txt` by default.
+
 ### To Enable CUDA
 
 1. **Install NVIDIA drivers** (if not already installed)
@@ -105,15 +107,7 @@ The app auto-detects NVIDIA CUDA and uses GPU if available. For CPU-only systems
    - Download from [NVIDIA CUDA Downloads](https://developer.nvidia.com/cuda-downloads)
    - Or via winget: `winget install Nvidia.CUDA`
 
-3. **Install CUDA dependencies in venv**
-
-   ```batch
-   .venv\Scripts\activate
-   pip uninstall ctranslate2 -y
-   pip install ctranslate2 nvidia-cudnn-cu12
-   ```
-
-4. **Verify** - Check the log on startup:
+3. **Verify** - Check the log on startup:
 
    ```log
    Loading Whisper model: base on cuda (float16)

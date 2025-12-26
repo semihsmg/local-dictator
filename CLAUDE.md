@@ -149,9 +149,10 @@ Pillow
 keyboard
 pynput
 pyperclip
+nvidia-cudnn-cu12
 ```
 
-Note: `winsound` is Windows built-in, no pip install needed.
+Note: `winsound` is Windows built-in, no pip install needed. `nvidia-cudnn-cu12` provides cuDNN libraries for CUDA GPU acceleration.
 
 ## Lucide Icon Handling
 
