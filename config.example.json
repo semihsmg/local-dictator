@@ -5,6 +5,6 @@
   "device": "auto",
   "language": null,
   "beep_enabled": true,
-  "log_to_file": true,
+  "log_to_file": false,
   "log_to_console": true
 }
