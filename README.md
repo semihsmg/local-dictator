@@ -4,7 +4,7 @@ A local push-to-talk speech-to-text dictation app for Windows. Hold a hotkey, sp
 
 ## Features
 
-- **Push-to-talk**: Hold `Right Ctrl`, press `Menu` to record, release `Right Ctrl` to transcribe
+- **Push-to-talk**: Hold `Right Ctrl` to record, release to transcribe
 - **Local processing**: Uses [faster-whisper](https://github.com/SYSTRAN/faster-whisper) with the base model - no cloud, no API keys
 - **Multi-language**: Auto-detects language or set a specific one in config
 - **System-wide**: Works in any application via clipboard injection
@@ -34,7 +34,7 @@ This creates a virtual environment and installs dependencies. First run will dow
 start.bat
 ```
 
-A cyan icon appears in the system tray. Hold `Right Ctrl` + press `Menu` to dictate:
+A cyan icon appears in the system tray. Hold `Right Ctrl` to dictate:
 
 | Icon Color | State |
 | ---------- | ----- |
@@ -50,13 +50,13 @@ Copy `config.example.json` to `config.json` to customize (optional - defaults ar
 
 ```json
 {
-  "hotkey": "right ctrl+menu",
+  "hotkey": "right ctrl",
   "min_duration_seconds": 0.5,
   "model": "base",
   "device": "auto",
   "language": null,
   "beep_enabled": true,
-  "log_to_file": true,
+  "log_to_file": false,
   "log_to_console": true
 }
 ```
@@ -78,7 +78,7 @@ Any key or key combination is supported:
 
 | Format | Example | Behavior |
 | ------ | ------- | -------- |
-| Single key | `"menu"`, `"f9"`, `"pause"`, `"f14"` | Hold key to record, release to stop |
+| Single key | `"right ctrl"`, `"menu"`, `"f9"`, `"f14"` | Hold key to record, release to stop |
 | Modifier+key | `"ctrl+insert"`, `"right ctrl+menu"`, `"alt+\`"` | Hold modifier, press key to start, release modifier to stop |
 
 To identify key names, run `python test_keyboard.py` and press keys to see their names.

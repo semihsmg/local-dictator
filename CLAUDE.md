@@ -29,7 +29,7 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 
 ### Hotkey: Push-to-Talk
 
-- **Default:** `Right Ctrl + Menu` (configurable via `config.json`)
+- **Default:** `Right Ctrl` (configurable via `config.json`)
 - **Format:** Any key or modifier+key combination (e.g., `"menu"`, `"f9"`, `"f14"`, `"ctrl+insert"`)
 - **Behavior:** Single key = hold to record; Modifier+key = hold modifier, press key to start, release modifier to stop
 - **Suppression:** All hotkeys are suppressed to prevent side effects
@@ -98,13 +98,13 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 
 ```json
 {
-  "hotkey": "right ctrl+menu",
+  "hotkey": "right ctrl",
   "min_duration_seconds": 0.5,
   "model": "base",
   "device": "auto",
   "language": null,
   "beep_enabled": true,
-  "log_to_file": true,
+  "log_to_file": false,
   "log_to_console": true
 }
 ```
@@ -228,7 +228,7 @@ Hotkeys are parsed dynamically from the config string:
 
 - Register key press/release handlers (always suppressed)
 
-Invalid key names fall back to default (`right ctrl+menu`) with a warning log.
+Invalid key names fall back to default (`right ctrl`) with a warning log.
 
 ### Error Conditions to Handle
 
