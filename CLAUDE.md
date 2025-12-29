@@ -83,6 +83,7 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 
 - **Menu items:**
   - Status display (current state: Idle/Recording/Processing)
+  - Language selection (if `language_presets` configured): Auto, EN, DE, etc. with radio indicator
   - Exit
 
 ### Model Loading
@@ -103,6 +104,7 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
   "model": "base",
   "device": "auto",
   "language": null,
+  "language_presets": ["en", "de", "es"],
   "beep_enabled": true,
   "log_to_file": false,
   "log_to_console": true
@@ -113,6 +115,7 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 | ------ | ------ | ----------- |
 | `hotkey` | Key or modifier+key | Push-to-talk hotkey (falls back to default if invalid) |
 | `device` | `"auto"`, `"cuda"`, `"cpu"` | Compute device for transcription |
+| `language_presets` | Array of language codes | Languages shown in tray menu for quick switching (empty = hide menu) |
 
 All fields should have sensible defaults if config file is missing.
 

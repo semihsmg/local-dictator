@@ -6,7 +6,7 @@ A local push-to-talk speech-to-text dictation app for Windows. Hold a hotkey, sp
 
 - **Push-to-talk**: Hold `Right Ctrl` to record, release to transcribe
 - **Local processing**: Uses [faster-whisper](https://github.com/SYSTRAN/faster-whisper) with the base model - no cloud, no API keys
-- **Multi-language**: Auto-detects language or set a specific one in config
+- **Multi-language**: Auto-detects language or quick-switch via tray menu
 - **System-wide**: Works in any application via clipboard injection
 - **System tray**: Minimal footprint with color-coded status icon
 - **Audio feedback**: Beeps indicate recording start/stop/error
@@ -42,7 +42,7 @@ A cyan icon appears in the system tray. Hold `Right Ctrl` to dictate:
 | Red | Recording - speak now |
 | Yellow | Processing - transcribing |
 
-Right-click the tray icon to exit.
+Right-click the tray icon to switch languages or exit.
 
 ## Configuration
 
@@ -55,6 +55,7 @@ Copy `config.example.json` to `config.json` to customize (optional - defaults ar
   "model": "base",
   "device": "auto",
   "language": null,
+  "language_presets": ["en", "de", "es"],
   "beep_enabled": true,
   "log_to_file": false,
   "log_to_console": true
@@ -63,11 +64,12 @@ Copy `config.example.json` to `config.json` to customize (optional - defaults ar
 
 | Option | Description |
 | ------ | ----------- |
-| `hotkey` | Push-to-talk hotkey (see supported presets below) |
+| `hotkey` | Push-to-talk hotkey (see supported formats below) |
 | `min_duration_seconds` | Minimum recording length (prevents accidental triggers) |
 | `model` | Whisper model size (tiny, base, small) |
 | `device` | Compute device: `"auto"`, `"cuda"`, or `"cpu"` |
 | `language` | Language code (e.g., "en", "de", "fr") or null for auto-detect |
+| `language_presets` | Quick-switch languages in tray menu (e.g., `["en", "de"]`); empty to hide |
 | `beep_enabled` | Audio feedback on/off |
 | `log_to_file` | Write logs to `local-dictator.log` |
 | `log_to_console` | Print logs to console |
