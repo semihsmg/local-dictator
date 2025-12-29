@@ -45,19 +45,20 @@ BEEP_FREQUENCIES = {
 BEEP_DURATION = 100  # ms
 
 DEFAULT_CONFIG = {
-    "hotkey": "right ctrl+menu",
+    "hotkey": "right ctrl",
     "min_duration_seconds": 0.5,
     "model": "base",
     "device": "auto",  # "auto", "cuda", or "cpu"
     "language": None,  # None = auto-detect
+    "language_presets": [],  # Quick-switch languages in tray menu
     "beep_enabled": True,
-    "log_to_file": True,
+    "log_to_file": False,
     "log_to_console": True
 }
 
 CLIPBOARD_RESTORE_DELAY = 0.1  # 100ms
 
-DEFAULT_HOTKEY = "right ctrl+menu"
+DEFAULT_HOTKEY = "right ctrl"
 
 
 class AppState(Enum):
@@ -104,6 +105,15 @@ class DictatorApp:
         except (json.JSONDecodeError, Exception) as e:
             print(f"Config error, using defaults: {e}")
             return DEFAULT_CONFIG.copy()
+
+    def _save_config(self):
+        """Save current config to file."""
+        try:
+            with open(CONFIG_PATH, "w") as f:
+                json.dump(self.config, f, indent=2)
+            self.logger.info("Config saved")
+        except Exception as e:
+            self.logger.error(f"Failed to save config: {e}")
 
     def _setup_logging(self):
         """Configure logging based on config."""
@@ -462,16 +472,56 @@ class DictatorApp:
             else:
                 self.logger.error(f"Failed to register hotkey: {e}")
 
+    def _set_language(self, lang_code):
+        """Set the transcription language and save to config."""
+        def action(icon, item):
+            self.config["language"] = lang_code
+            self._save_config()
+            self.logger.info(f"Language set to: {lang_code or 'Auto'}")
+            self.icon.update_menu()
+        return action
+
+    def _is_language_selected(self, lang_code):
+        """Check if a language is currently selected."""
+        def check(item):
+            return self.config.get("language") == lang_code
+        return check
+
     def _create_menu(self):
         """Create system tray menu."""
         def get_status_text(item):
             return f"Status: {self.state.value.capitalize()}"
 
-        return pystray.Menu(
+        menu_items = [
             pystray.MenuItem(get_status_text, lambda: None, enabled=False),
             pystray.Menu.SEPARATOR,
-            pystray.MenuItem("Exit", self._exit)
-        )
+        ]
+
+        # Add language selection if language_presets are configured
+        languages = self.config.get("language_presets", [])
+        if languages:
+            # Auto-detect option (always first)
+            menu_items.append(pystray.MenuItem(
+                "Auto",
+                self._set_language(None),
+                checked=self._is_language_selected(None),
+                radio=True
+            ))
+
+            # Configured languages
+            for lang in languages:
+                menu_items.append(pystray.MenuItem(
+                    lang.upper(),
+                    self._set_language(lang),
+                    checked=self._is_language_selected(lang),
+                    radio=True
+                ))
+
+            menu_items.append(pystray.Menu.SEPARATOR)
+
+        menu_items.append(pystray.MenuItem("Exit", self._exit))
+
+        return pystray.Menu(*menu_items)
 
     def _exit(self, icon=None, item=None):
         """Clean up and exit application."""
