@@ -133,7 +133,8 @@ local-dictator/
 ├── CLAUDE.md              # This specification
 ├── config.json            # User configuration
 ├── requirements.txt       # Python dependencies
-├── start.bat              # Windows launcher script
+├── start-cpu.bat          # Windows launcher (CPU/AMD)
+├── start-cuda.bat         # Windows launcher (NVIDIA CUDA)
 ├── setup.bat              # Venv setup script
 ├── local_dictator.py      # Main application entry point
 ├── test_keyboard.py       # Utility to identify key names
@@ -174,22 +175,35 @@ The `message-circle-code` icon should be:
 
 ```batch
 @echo off
+cd /d "%~dp0"
 python -m venv .venv
 call .venv\Scripts\activate
 pip install -r requirements.txt
-echo Setup complete. Run start.bat to launch.
+echo Setup complete. Run start-cpu.bat or start-cuda.bat to launch.
 pause
 ```
 
-### start.bat
+### start-cpu.bat
 
 ```batch
 @echo off
+cd /d "%~dp0"
 call .venv\Scripts\activate
-pythonw local_dictator.py
+start "" pythonw local_dictator.py
 ```
 
-Note: `pythonw` runs without console window. For debugging, use `python` instead.
+### start-cuda.bat
+
+```batch
+@echo off
+cd /d "%~dp0"
+call .venv\Scripts\activate
+set NVIDIA_PATH=%CD%\.venv\Lib\site-packages\nvidia
+set PATH=%NVIDIA_PATH%\cudnn\bin;%NVIDIA_PATH%\cublas\bin;%NVIDIA_PATH%\cuda_runtime\bin;%PATH%
+start "" pythonw local_dictator.py
+```
+
+Note: `pythonw` runs without console window. `start ""` detaches the process so the batch file exits immediately. Use `start-cuda.bat` for NVIDIA GPU acceleration, `start-cpu.bat` for CPU/AMD systems.
 
 ## Implementation Notes
 

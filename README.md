@@ -31,7 +31,8 @@ This creates a virtual environment and installs dependencies. First run will dow
 ## Usage
 
 ```batch
-start.bat
+start-cpu.bat    # For CPU or AMD GPU
+start-cuda.bat   # For NVIDIA GPU (CUDA acceleration)
 ```
 
 A cyan icon appears in the system tray. Hold `Right Ctrl` to dictate:
