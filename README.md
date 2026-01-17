@@ -67,7 +67,7 @@ Copy `config.example.json` to `config.json` to customize (optional - defaults ar
 | ------ | ----------- |
 | `hotkey` | Push-to-talk hotkey (see supported formats below) |
 | `min_duration_seconds` | Minimum recording length (prevents accidental triggers) |
-| `model` | Whisper model size (tiny, base, small) |
+| `model` | Whisper model size (see [available models](#available-models)) |
 | `device` | Compute device: `"auto"`, `"cuda"`, or `"cpu"` |
 | `language` | Language code (e.g., "en", "de", "fr") or null for auto-detect |
 | `language_presets` | Quick-switch languages in tray menu (e.g., `["en", "de"]`); empty to hide |
@@ -87,6 +87,21 @@ Any key or key combination is supported:
 To identify key names, run `python test_keyboard.py` and press keys to see their names.
 
 All hotkeys are suppressed to prevent side effects (no context menus, no typed characters).
+
+### Available Models
+
+| Model | Parameters | VRAM | Relative Speed |
+| ----- | ---------- | ---- | -------------- |
+| `tiny` / `tiny.en` | 39 M | ~1 GB | ~10x |
+| `base` / `base.en` | 74 M | ~1 GB | ~7x |
+| `small` / `small.en` | 244 M | ~2 GB | ~4x |
+| `medium` / `medium.en` | 769 M | ~5 GB | ~2x |
+| `large-v3` | 1550 M | ~10 GB | 1x |
+| `turbo` | 798 M | ~6 GB | ~8x |
+
+`.en` models are English-only and perform slightly better for English content. faster-whisper with int8 quantization uses less VRAM than shown above.
+
+For detailed model information, see [OpenAI Whisper: Available Models](https://github.com/openai/whisper?tab=readme-ov-file#available-models-and-languages).
 
 ## Troubleshooting
 
