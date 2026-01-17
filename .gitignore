@@ -11,6 +11,9 @@ build/
 # Logs
 *.log
 
+# Lock file (single instance)
+.lock
+
 # User config (copy from config.example.json)
 config.json
 

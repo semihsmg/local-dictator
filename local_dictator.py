@@ -2,8 +2,11 @@
 Local Dictator - Push-to-talk speech-to-text dictation for Windows
 """
 
+import atexit
 import json
 import logging
+import msvcrt
+import os
 import sys
 import threading
 import time
@@ -26,6 +29,7 @@ from pynput.keyboard import Controller as KeyboardController, Key
 SCRIPT_DIR = Path(__file__).parent.resolve()
 CONFIG_PATH = SCRIPT_DIR / "config.json"
 LOG_PATH = SCRIPT_DIR / "local-dictator.log"
+LOCK_PATH = SCRIPT_DIR / ".lock"
 ICON_PATH = SCRIPT_DIR / "icons" / "message-circle-code.png"
 
 SAMPLE_RATE = 16000
@@ -562,7 +566,36 @@ class DictatorApp:
             self._exit()
 
 
+def acquire_lock():
+    """Acquire single-instance lock. Returns file handle if successful, None if already running."""
+    try:
+        # Open file for writing, create if doesn't exist
+        handle = os.open(str(LOCK_PATH), os.O_WRONLY | os.O_CREAT | os.O_TRUNC)
+        # Try to lock the file exclusively (non-blocking)
+        msvcrt.locking(handle, msvcrt.LK_NBLCK, 1)
+        # Register cleanup on exit
+        atexit.register(lambda: release_lock(handle))
+        return handle
+    except (OSError, IOError):
+        return None
+
+
+def release_lock(handle):
+    """Release the lock file."""
+    try:
+        msvcrt.locking(handle, msvcrt.LK_UNLCK, 1)
+        os.close(handle)
+        LOCK_PATH.unlink(missing_ok=True)
+    except Exception:
+        pass
+
+
 def main():
+    # Check single instance before anything else
+    lock = acquire_lock()
+    if lock is None:
+        sys.exit(0)  # Silent exit - another instance is running
+
     try:
         app = DictatorApp()
         app.run()

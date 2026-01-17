@@ -91,6 +91,13 @@ A local push-to-talk speech-to-text dictation app for coding sessions in VS Code
 - **Strategy:** Eager (load at app startup)
 - **Expected startup time:** 2-3 seconds
 
+### Single Instance
+
+- **Mechanism:** Lock file (`.lock` in script directory)
+- **Behavior:** Second instance silently exits if another is already running
+- **Lock type:** Windows file locking (`msvcrt.locking` with `LK_NBLCK`)
+- **Cleanup:** Lock released automatically on exit via `atexit`
+
 ## Configuration
 
 **File:** `config.json` in script directory
@@ -139,6 +146,7 @@ local-dictator/
 ├── local_dictator.py      # Main application entry point
 ├── test_keyboard.py       # Utility to identify key names
 ├── local-dictator.log     # Log file (generated at runtime)
+├── .lock                  # Single-instance lock file (runtime)
 └── icons/                 # Generated icon files (optional cache)
 ```
 

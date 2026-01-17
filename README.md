@@ -11,6 +11,7 @@ A local push-to-talk speech-to-text dictation app for Windows. Hold a hotkey, sp
 - **System tray**: Minimal footprint with color-coded status icon
 - **Audio feedback**: Beeps indicate recording start/stop/error
 - **GPU acceleration**: Auto-detects NVIDIA CUDA for faster transcription
+- **Single instance**: Only one instance runs at a time (duplicates silently exit)
 
 ## Requirements
 
